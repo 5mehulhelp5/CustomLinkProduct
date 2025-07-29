@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!--Similar Items -->
+    <type name="Magento\Catalog\Model\Product\LinkTypeProvider">
+        <arguments>
+            <argument name="linkTypes" xsi:type="array">
+                <item name="similarlink" xsi:type="const">Renga\CustomLinkProduct\Model\Product\Link::LINK_TYPE_SIMILAR</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\ProductLink\CollectionProvider">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="similarlink" xsi:type="object">Renga\CustomLinkProduct\Model\ProductLink\CollectionProvider\SimilarProducts</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- used for import Similar link products via import CSV feature -->
+    <type name="Magento\CatalogImportExport\Model\Import\Product\LinkProcessor">
+        <arguments>
+            <argument name="linkNameToId" xsi:type="array">
+                <item name="_similarlink_" xsi:type="const">Renga\CustomLinkProduct\Model\Product\Link::LINK_TYPE_SIMILAR</item>
+            </argument>
+        </arguments>
+    </type>
+    <!--End Similar Items -->
+    <!--Repair Items -->
+    <type name="Magento\Catalog\Model\Product\LinkTypeProvider">
+        <arguments>
+            <argument name="linkTypes" xsi:type="array">
+                <item name="repairlink" xsi:type="const">Renga\CustomLinkProduct\Model\Product\Link::LINK_TYPE_REPAIR</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\ProductLink\CollectionProvider">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="repairlink" xsi:type="object">Renga\CustomLinkProduct\Model\ProductLink\CollectionProvider\RepairProducts</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- used for import Repair link products via import CSV feature -->
+    <type name="Magento\CatalogImportExport\Model\Import\Product\LinkProcessor">
+        <arguments>
+            <argument name="linkNameToId" xsi:type="array">
+                <item name="_repairlink_" xsi:type="const">Renga\CustomLinkProduct\Model\Product\Link::LINK_TYPE_REPAIR</item>
+            </argument>
+        </arguments>
+    </type>
+    <!--End Repair Items -->
+    <!--Functional Items -->
+    <type name="Magento\Catalog\Model\Product\LinkTypeProvider">
+        <arguments>
+            <argument name="linkTypes" xsi:type="array">
+                <item name="functionallink" xsi:type="const">Renga\CustomLinkProduct\Model\Product\Link::LINK_TYPE_FUNCTIONAL</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\ProductLink\CollectionProvider">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="functionallink" xsi:type="object">Renga\CustomLinkProduct\Model\ProductLink\CollectionProvider\FunctionalProducts</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- used for import Functional link products via import CSV feature -->
+    <type name="Magento\CatalogImportExport\Model\Import\Product\LinkProcessor">
+        <arguments>
+            <argument name="linkNameToId" xsi:type="array">
+                <item name="_functionallink_" xsi:type="const">Renga\CustomLinkProduct\Model\Product\Link::LINK_TYPE_FUNCTIONAL</item>
+            </argument>
+        </arguments>
+    </type>
+    <!--End Functional Items -->
+    <type name="Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType">
+        <plugin sortOrder="1" name="customLinkProductAbstractType" type="Renga\CustomLinkProduct\Plugin\Model\Import\Product\Type\AbstractTypePlugin"/>
+    </type>
+    <type name="Renga\CustomLinkProduct\Model\SimilarProduct">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Magento\Catalog\Model\ProductLink\CollectionProvider\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Renga\CustomLinkProduct\Model\RepairProduct">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Magento\Catalog\Model\ProductLink\CollectionProvider\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Renga\CustomLinkProduct\Model\FunctionalProduct">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Magento\Catalog\Model\ProductLink\CollectionProvider\Proxy</argument>
+        </arguments>
+    </type>
+</config>

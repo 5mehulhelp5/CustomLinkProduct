@@ -1,0 +1,14 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+interface ProductInterface {
+    similar_link_products: [ProductInterface]
+        @doc(description: "An array of products to be displayed in a Similar Products block.")
+        @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Batch\\SimilarProducts")
+    repair_link_products: [ProductInterface]
+        @doc(description: "An array of products to be displayed in a Repair Parts Products block.")
+        @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Batch\\RepairProducts")
+    functional_link_products: [ProductInterface]
+        @doc(description: "An array of products to be displayed in a Functional Equivalents Products block.")
+        @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Batch\\FunctionalProducts")
+}
