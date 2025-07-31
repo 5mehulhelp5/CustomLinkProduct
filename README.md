@@ -1,82 +1,69 @@
-# CustomLinkProduct
+# Renga CustomLinkProduct Module
 
-**Custom Link Product** adds support for multiple custom product relations in Magento 2, with GraphQL compatibility.
+## Overview
 
----
+The Renga CustomLinkProduct module extends Magento 2 with custom product link types and GraphQL APIs to manage them:
+
+- **Similar Link Products**: Products that are similar to the current product
+- **Repair Link Products**: Products that can be used to repair the current product
+- **Functional Link Products**: Products that are functionally equivalent to the current product
+
+## Installation
+
+### Composer Installation
+
+```bash
+composer require renga/module-custom-link-product
+```
+
+### Manual Installation
+
+1. Create the following directory structure in your Magento installation:
+   ```
+   app/code/Renga/CustomLinkProduct
+   ```
+
+2. Download the module code and place it in the directory
+
+3. Enable the module:
+   ```bash
+   bin/magento module:enable Renga_CustomLinkProduct
+   bin/magento setup:upgrade
+   bin/magento setup:di:compile
+   bin/magento cache:clean
+   ```
 
 ## Features
 
-* Supports importing **custom link products** via Magento's CSV Import.
-* Provides GraphQL fields to retrieve custom-linked products (similar to related, up-sell, and cross-sell products).
-* Handles backend logic for linking products.
-  *(Frontend/PWA implementation must be done separately or via GraphQL.)*
+- Adds three custom product link types to Magento 2
+- Provides GraphQL APIs for querying and updating product links
+- Includes validation for product links
+- Supports detailed error reporting
 
----
+## Usage
 
-## PHP Compatibility
+The module provides both Query and Mutation GraphQL APIs:
 
-This module is compatible with:
+### Query API
 
-* **PHP 7.4**
-* **PHP 8.1**
-* **PHP 8.2**
-
-> PHP 8.2 deprecates dynamic properties. Ensure all class properties are explicitly declared to avoid warnings.
-
----
-
-## Importing Custom Link Products
-
-To import custom link products using Magento's Import CSV:
-
-1. Add a new column `customlink_skus` in your CSV.
-2. Enter linked product SKUs separated by commas.
-   Example:
-
-   ```
-   sku,name,customlink_skus
-   24-WB06,"Product Name","sku-123,sku-456"
-   ```
-
----
-
-## GraphQL Usage
-
-Retrieve custom-linked products the same way as related/up-sell/cross-sell products:
-
-**Magento DevDocs Reference:**
-[Products Query](https://devdocs.magento.com/guides/v2.4/graphql/queries/products.html#retrieve-related-products-up-sells-and-cross-sells)
-
-### Example Query
+Retrieve linked products of specific types:
 
 ```graphql
-{
-  products(filter: { sku: { eq: "24-WB06" } }) {
+query {
+  products(filter: { sku: { eq: "24-MB01" } }) {
     items {
-      uid
+      sku
       name
-      related_products {
-        uid
-        name
-      }
-      upsell_products {
-        uid
-        name
-      }
-      crosssell_products {
-        uid
-        name
-      }
       similar_link_products {
-        uid
+        sku
         name
       }
       repair_link_products {
-        uid
+        sku
         name
       }
       functional_link_products {
-        uid
+        sku
         name
       }
     }
@@ -84,81 +71,36 @@ Retrieve custom-linked products the same way as related/up-sell/cross-sell produ
 }
 ```
 
----
+The module supports various query patterns including filtering, pagination, and retrieving detailed product information. See the [Query Examples](docs/query-examples.md) documentation for comprehensive examples.
 
-## PHP Usage
+### Mutation API
 
-```php
-public function __construct(
-    \Renga\CustomLinkProduct\Model\SimilarProduct $similarlinkproduct
-) {
-    $this->similarlinkproduct = $similarlinkproduct;
+Update product links of specific types:
+
+```graphql
+mutation {
+  updateSimilarLinkProducts(
+    input: {
+      product_sku: "24-MB01"
+      linked_product_skus: ["24-MB02", "24-MB03"]
+      position: 0
+    }
+  ) {
+    success
+    message
+  }
 }
-
-$product = $currentProduct;
-
-// Returns product collection
-$similarLinkItems = $this->similarlinkproduct->getSimilarLinkProducts($product);
-
-// Returns product IDs
-$similarLinkItemIds = $this->similarlinkproduct->getSimilarLinkProductIds($product);
 ```
 
----
+## Documentation
 
-## Installation
+For detailed API documentation, please refer to the following resources in the `docs` directory:
 
-### 1. Composer (Recommended)
-
-```bash
-composer require renga/custom-link-type-product
-```
-
-### 2. Manual Installation
-
-1. Download the extension.
-2. Unzip the file.
-3. Create the folder:
-
-   ```
-   {Magento_Root}/app/code/Renga/CustomLinkProduct
-   ```
-4. Copy the unzipped content to that folder.
-
----
-
-## 3. Enable & Deploy
-
-From your Magento root directory:
-
-```bash
-php bin/magento module:enable Renga_CustomLinkProduct
-php bin/magento setup:upgrade
-php bin/magento setup:di:compile
-php bin/magento setup:static-content:deploy -f
-php bin/magento cache:clean
-php bin/magento cache:flush
-```
-
----
+- [API Documentation](docs/API-DOCUMENTATION.md) - Comprehensive API documentation
+- [Query Examples](docs/query-examples.md) - Detailed GraphQL query examples
+- [Example GraphQL Payloads](docs/example-payloads.md) - Detailed GraphQL mutation examples
+- [Example cURL Requests](docs/curl-examples.md) - cURL request examples
 
 ## License
 
-This module is licensed under proprietary license.
-
----
-
-## Author
-
-Developed by Rengaraj.
-
----
-
-## Dependencies
-
-This module requires:
-* Magento Framework (~104.0.0 or ~105.0.0)
-* Magento Catalog Module (~104.0.0 or ~105.0.0)
-* Magento Store Module (~101.0.0 or ~102.0.0)
-
----
+[OSL-3.0](https://opensource.org/licenses/OSL-3.0)
