@@ -12,3 +12,49 @@ interface ProductInterface {
         @doc(description: "An array of products to be displayed in a Functional Equivalents Products block.")
         @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Batch\\FunctionalProducts")
 }
+
+type Mutation {
+    updateSimilarLinkProducts(
+        input: UpdateProductLinksInput! @doc(description: "An input object that defines the product SKU and the SKUs to link as similar products.")
+    ): UpdateProductLinksOutput @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Mutation\\UpdateSimilarLinkProducts") @doc(description: "Update similar link products for a specific product.")
+
+    updateRepairLinkProducts(
+        input: UpdateProductLinksInput! @doc(description: "An input object that defines the product SKU and the SKUs to link as repair products.")
+    ): UpdateProductLinksOutput @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Mutation\\UpdateRepairLinkProducts") @doc(description: "Update repair link products for a specific product.")
+
+    updateFunctionalLinkProducts(
+        input: UpdateProductLinksInput! @doc(description: "An input object that defines the product SKU and the SKUs to link as functional products.")
+    ): UpdateProductLinksOutput @resolver(class: "Renga\\CustomLinkProduct\\Model\\Resolver\\Mutation\\UpdateFunctionalLinkProducts") @doc(description: "Update functional link products for a specific product.")
+}
+
+input UpdateProductLinksInput @doc(description: "Defines the product SKU and the SKUs to link.") {
+    product_sku: String! @doc(description: "The SKU of the product to which the links will be added.")
+    linked_product_skus: [String!]! @doc(description: "An array of SKUs to link to the product.")
+    position: Int @doc(description: "The position of the linked products. If not specified, products will be added at the end.")
+}
+
+type ProductLinkInfo @doc(description: "Contains information about a successfully linked product.") {
+    sku: String! @doc(description: "The SKU of the linked product.")
+    name: String @doc(description: "The name of the linked product.")
+    position: Int @doc(description: "The position of the linked product.")
+}
+
+type InvalidProductLinkInfo @doc(description: "Contains information about an invalid product link.") {
+    sku: String! @doc(description: "The SKU of the invalid product.")
+    reason: String @doc(description: "The reason why the product link is invalid.")
+}
+
+type ProductInfo @doc(description: "Contains Information about the product") {
+    sku: String! @doc(description: "The SKU of the product.")
+    name: String @doc(description: "The name of the product.")
+}
+
+type UpdateProductLinksOutput @doc(description: "Contains details about the result of the update operation.") {
+    product: ProductInfo @doc(description: "The product with its SKU and name.")
+    success: Boolean! @doc(description: "Indicates whether the update was successful.")
+    message: String @doc(description: "A message describing the result of the update operation.")
+    successful_links: [ProductLinkInfo] @doc(description: "An array of successfully added product links.")
+    invalid_links: [InvalidProductLinkInfo] @doc(description: "An array of invalid product links with reasons.")
+    duplicate_links: [String] @doc(description: "An array of duplicate SKUs found in the input.")
+    already_linked_skus: [String] @doc(description: "An array of SKUs that were already linked to the product.")
+}

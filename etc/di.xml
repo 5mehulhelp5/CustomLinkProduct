@@ -90,4 +90,13 @@
             <argument name="collectionProvider" xsi:type="object">Magento\Catalog\Model\ProductLink\CollectionProvider\Proxy</argument>
         </arguments>
     </type>
+
+    <!-- GraphQL Resolvers -->
+    <type name="Renga\CustomLinkProduct\Model\Resolver\Mutation\AbstractUpdateProductLinks">
+        <arguments>
+            <argument name="productRepository" xsi:type="object">Magento\Catalog\Api\ProductRepositoryInterface\Proxy</argument>
+            <argument name="productLinkManagement" xsi:type="object">Magento\Catalog\Api\ProductLinkManagementInterface\Proxy</argument>
+            <argument name="productLinkFactory" xsi:type="object">Magento\Catalog\Api\Data\ProductLinkInterfaceFactory</argument>
+        </arguments>
+    </type>
 </config>
