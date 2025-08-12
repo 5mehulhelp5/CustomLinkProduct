@@ -143,6 +143,97 @@ curl -X POST \
 }
 ```
 
+## 4. Update All Link Types in a Single Request
+
+### Request
+
+```bash
+curl -X POST \
+  https://your-magento-instance.com/graphql \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer jiqwcd2woaa1pifmwxe8hfiwykzzo6yv' \
+  -d '{
+    "query": "mutation { updateAllLinkProducts(input: { product_sku: \"24-MB01\", similar_product_skus: [\"24-MB02\", \"24-MB03\"], repair_product_skus: [\"24-WB03\", \"24-WB04\"], functional_product_skus: [\"24-UB02\", \"24-WB06\"], position: 0 }) { product { sku name } success message similar_links_result { link_type success message successful_links { sku name position } invalid_links { sku reason } duplicate_links already_linked_skus } repair_links_result { link_type success message successful_links { sku name position } invalid_links { sku reason } duplicate_links already_linked_skus } functional_links_result { link_type success message successful_links { sku name position } invalid_links { sku reason } duplicate_links already_linked_skus } } }"
+}'
+```
+
+### Response
+
+```json
+{
+  "data": {
+    "updateAllLinkProducts": {
+      "product": {
+        "sku": "24-MB01",
+        "name": "Joust Duffle Bag"
+      },
+      "success": true,
+      "message": "Product links updated successfully.",
+      "similar_links_result": {
+        "link_type": "similar",
+        "success": true,
+        "message": "Product links updated successfully.",
+        "successful_links": [
+          {
+            "sku": "24-MB02",
+            "name": "Fusion Backpack",
+            "position": 0
+          },
+          {
+            "sku": "24-MB03",
+            "name": "Crown Summit Backpack",
+            "position": 1
+          }
+        ],
+        "invalid_links": [],
+        "duplicate_links": [],
+        "already_linked_skus": []
+      },
+      "repair_links_result": {
+        "link_type": "repair",
+        "success": true,
+        "message": "Product links updated successfully.",
+        "successful_links": [
+          {
+            "sku": "24-WB03",
+            "name": "Bolo Sport Watch",
+            "position": 0
+          },
+          {
+            "sku": "24-WB04",
+            "name": "Luma Analog Watch",
+            "position": 1
+          }
+        ],
+        "invalid_links": [],
+        "duplicate_links": [],
+        "already_linked_skus": []
+      },
+      "functional_links_result": {
+        "link_type": "functional",
+        "success": true,
+        "message": "Product links updated successfully.",
+        "successful_links": [
+          {
+            "sku": "24-UB02",
+            "name": "Impulse Duffle",
+            "position": 0
+          },
+          {
+            "sku": "24-WB06",
+            "name": "Aim Analog Watch",
+            "position": 1
+          }
+        ],
+        "invalid_links": [],
+        "duplicate_links": [],
+        "already_linked_skus": []
+      }
+    }
+  }
+}
+```
+
 ## Notes
 
 1. Replace `https://your-magento-instance.com/graphql` with your actual Magento GraphQL endpoint.

@@ -75,17 +75,20 @@ For comprehensive examples of all these query patterns, including cURL examples 
 
 ## Mutation API
 
-The module provides three mutations for updating different types of product links:
+The module provides four mutations for updating different types of product links:
 
 1. `updateSimilarLinkProducts` - Update similar products links
 2. `updateRepairLinkProducts` - Update repair parts products links
 3. `updateFunctionalLinkProducts` - Update functional equivalent products links
+4. `updateAllLinkProducts` - Update all three types of product links in a single request
 
-All mutations follow the same pattern and accept the same input format.
+The first three mutations follow the same pattern and accept the same input format. The fourth mutation (`updateAllLinkProducts`) uses a different input format that allows specifying links for all three types in a single request.
 
 ## Input Format
 
-All mutations use the same input format:
+### Individual Link Type Updates
+
+The first three mutations (`updateSimilarLinkProducts`, `updateRepairLinkProducts`, `updateFunctionalLinkProducts`) use the same input format:
 
 ```graphql
 input UpdateProductLinksInput {
@@ -101,9 +104,35 @@ input UpdateProductLinksInput {
 | linked_product_skus | [String!]! | Yes | An array of SKUs to link to the product |
 | position | Int | No | The position of the linked products. If not specified, products will be added at the end |
 
+### Unified Link Type Update
+
+The `updateAllLinkProducts` mutation uses a different input format that allows specifying links for all three types in a single request:
+
+```graphql
+input UpdateAllProductLinksInput {
+    product_sku: String!
+    similar_product_skus: [String!]
+    repair_product_skus: [String!]
+    functional_product_skus: [String!]
+    position: Int
+}
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| product_sku | String | Yes | The SKU of the product to which the links will be added |
+| similar_product_skus | [String!] | No | An array of SKUs to link as similar products |
+| repair_product_skus | [String!] | No | An array of SKUs to link as repair products |
+| functional_product_skus | [String!] | No | An array of SKUs to link as functional products |
+| position | Int | No | The starting position of the linked products. If not specified, products will be added at the end |
+
+Note: For the unified update, at least one of `similar_product_skus`, `repair_product_skus`, or `functional_product_skus` must be provided.
+
 ## Response Format
 
-All mutations return the same output format:
+### Individual Link Type Updates
+
+The first three mutations return the same output format:
 
 ```graphql
 type UpdateProductLinksOutput {
@@ -122,6 +151,52 @@ type UpdateProductLinksOutput {
 | product | ProductInfo | The product after updating the links, including only its SKU and name |
 | success | Boolean | Indicates whether the update was successful |
 | message | String | A message describing the result of the update operation |
+| successful_links | [ProductLinkInfo] | An array of successfully added product links with details |
+| invalid_links | [InvalidProductLinkInfo] | An array of invalid product links with reasons |
+| duplicate_links | [String] | An array of duplicate SKUs found in the input |
+| already_linked_skus | [String] | An array of SKUs that were already linked to the product |
+
+### Unified Link Type Update
+
+The `updateAllLinkProducts` mutation returns a different output format that includes results for all three link types:
+
+```graphql
+type UpdateAllProductLinksOutput {
+    product: ProductInfo
+    success: Boolean!
+    message: String
+    similar_links_result: LinkTypeResult
+    repair_links_result: LinkTypeResult
+    functional_links_result: LinkTypeResult
+}
+
+type LinkTypeResult {
+    link_type: String!
+    success: Boolean!
+    message: String
+    successful_links: [ProductLinkInfo]
+    invalid_links: [InvalidProductLinkInfo]
+    duplicate_links: [String]
+    already_linked_skus: [String]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| product | ProductInfo | The product after updating the links, including only its SKU and name |
+| success | Boolean | Indicates whether the overall update was successful |
+| message | String | A message describing the overall result of the update operation |
+| similar_links_result | LinkTypeResult | The result of updating similar link products |
+| repair_links_result | LinkTypeResult | The result of updating repair link products |
+| functional_links_result | LinkTypeResult | The result of updating functional link products |
+
+Each `LinkTypeResult` contains:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| link_type | String | The type of link (similar, repair, or functional) |
+| success | Boolean | Indicates whether the update for this link type was successful |
+| message | String | A message describing the result of the update operation for this link type |
 | successful_links | [ProductLinkInfo] | An array of successfully added product links with details |
 | invalid_links | [InvalidProductLinkInfo] | An array of invalid product links with reasons |
 | duplicate_links | [String] | An array of duplicate SKUs found in the input |
@@ -221,6 +296,77 @@ mutation {
     }
     duplicate_links
     already_linked_skus
+  }
+}
+```
+
+### Update All Link Types in a Single Request
+
+```graphql
+mutation {
+  updateAllLinkProducts(
+    input: {
+      product_sku: "24-MB01"
+      similar_product_skus: ["24-MB02", "24-MB03"]
+      repair_product_skus: ["24-WB03", "24-WB04"]
+      functional_product_skus: ["24-UB02", "24-WB06"]
+      position: 0
+    }
+  ) {
+    product {
+      sku
+      name
+    }
+    success
+    message
+    similar_links_result {
+      link_type
+      success
+      message
+      successful_links {
+        sku
+        name
+        position
+      }
+      invalid_links {
+        sku
+        reason
+      }
+      duplicate_links
+      already_linked_skus
+    }
+    repair_links_result {
+      link_type
+      success
+      message
+      successful_links {
+        sku
+        name
+        position
+      }
+      invalid_links {
+        sku
+        reason
+      }
+      duplicate_links
+      already_linked_skus
+    }
+    functional_links_result {
+      link_type
+      success
+      message
+      successful_links {
+        sku
+        name
+        position
+      }
+      invalid_links {
+        sku
+        reason
+      }
+      duplicate_links
+      already_linked_skus
+    }
   }
 }
 ```
