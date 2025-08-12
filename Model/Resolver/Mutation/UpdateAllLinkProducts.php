@@ -19,32 +19,33 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Renga\CustomLinkProduct\Model\Product\Link;
 use Renga\CustomLinkProduct\Model\Utility\ProductLinkUtility;
 
 /**
- * Abstract resolver for updating product links
+ * Resolver for updating all types of product links in a single request
  */
-abstract class AbstractUpdateProductLinks implements ResolverInterface
+class UpdateAllLinkProducts implements ResolverInterface
 {
     /**
      * @var ProductRepositoryInterface
      */
-    protected $productRepository;
+    private $productRepository;
 
     /**
      * @var ProductLinkManagementInterface
      */
-    protected $productLinkManagement;
+    private $productLinkManagement;
 
     /**
      * @var ProductLinkInterfaceFactory
      */
-    protected $productLinkFactory;
+    private $productLinkFactory;
 
     /**
      * @var ProductLinkUtility
      */
-    protected $productLinkUtility;
+    private $productLinkUtility;
 
     /**
      * @param ProductRepositoryInterface $productRepository
@@ -77,36 +78,35 @@ abstract class AbstractUpdateProductLinks implements ResolverInterface
         $this->validateInputArgs($args);
 
         $productSku = $args['input']['product_sku'];
-        $linkedProductSkus = $args['input']['linked_product_skus'];
+        $similarProductSkus = $args['input']['similar_product_skus'] ?? [];
+        $repairProductSkus = $args['input']['repair_product_skus'] ?? [];
+        $functionalProductSkus = $args['input']['functional_product_skus'] ?? [];
         $position = $args['input']['position'] ?? 0;
-        $linkType = $this->getLinkType();
 
         try {
             // Get and validate the main product
             $product = $this->productLinkUtility->getAndValidateProduct($productSku);
+            $productData = ['sku' => $product->getSku(), 'name' => $product->getName()];
 
-            // Process links for this product and link type
-            $result = $this->productLinkUtility->processLinks($productSku, $linkedProductSkus, $linkType, $position);
+            // Process each link type
+            $similarResult = $this->productLinkUtility->processLinks($productSku, $similarProductSkus, Link::LINK_TYPE_SIMILAR_CODE, $position);
+            $repairResult = $this->productLinkUtility->processLinks($productSku, $repairProductSkus, Link::LINK_TYPE_REPAIR_CODE, $position);
+            $functionalResult = $this->productLinkUtility->processLinks($productSku, $functionalProductSkus, Link::LINK_TYPE_FUNCTIONAL_CODE, $position);
 
-            if ($result['success']) {
-                // Get the updated product with new links
-                $updatedProduct = $this->productRepository->get($productSku);
+            // Determine overall success
+            $overallSuccess = $similarResult['success'] || $repairResult['success'] || $functionalResult['success'];
+            $overallMessage = $overallSuccess
+                ? __('Product links updated successfully.')
+                : __('No valid product links to add.');
 
-                return $this->productLinkUtility->prepareSuccessResponse(
-                    $updatedProduct,
-                    $result['successful_links'],
-                    $result['invalid_links'],
-                    $result['duplicate_links'],
-                    $result['already_linked_skus']
-                );
-            } else {
-                return $this->productLinkUtility->prepareFailureResponse(
-                    $product,
-                    $result['invalid_links'],
-                    $result['duplicate_links'],
-                    $result['already_linked_skus']
-                );
-            }
+            return [
+                'product' => $productData,
+                'success' => $overallSuccess,
+                'message' => $overallMessage,
+                'similar_links_result' => $this->productLinkUtility->formatLinkTypeResult('similar', $similarResult),
+                'repair_links_result' => $this->productLinkUtility->formatLinkTypeResult('repair', $repairResult),
+                'functional_links_result' => $this->productLinkUtility->formatLinkTypeResult('functional', $functionalResult)
+            ];
         } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(
                 __('The product with SKU "%1" does not exist.', $productSku)
@@ -126,15 +126,19 @@ abstract class AbstractUpdateProductLinks implements ResolverInterface
      */
     private function validateInputArgs(?array $args): void
     {
-        if (!isset($args['input']) || !isset($args['input']['product_sku']) || !isset($args['input']['linked_product_skus'])) {
+        if (!isset($args['input']) || !isset($args['input']['product_sku'])) {
             throw new GraphQlInputException(__('Required parameters are missing'));
         }
-    }
 
-    /**
-     * Get the link type for this resolver
-     *
-     * @return string
-     */
-    abstract protected function getLinkType(): string;
+        // At least one of the link type arrays must be provided
+        if (
+            (!isset($args['input']['similar_product_skus']) || empty($args['input']['similar_product_skus'])) &&
+            (!isset($args['input']['repair_product_skus']) || empty($args['input']['repair_product_skus'])) &&
+            (!isset($args['input']['functional_product_skus']) || empty($args['input']['functional_product_skus']))
+        ) {
+            throw new GraphQlInputException(
+                __('At least one of similar_product_skus, repair_product_skus, or functional_product_skus must be provided')
+            );
+        }
+    }
 }
