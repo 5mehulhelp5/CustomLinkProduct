@@ -37,6 +37,7 @@ composer require renga/module-custom-link-product
 
 - Adds three custom product link types to Magento 2
 - Provides GraphQL APIs for querying and updating product links
+- Supports both individual link type updates and a unified update for all link types
 - Includes validation for product links
 - Supports detailed error reporting
 
@@ -83,6 +84,25 @@ mutation {
     input: {
       product_sku: "24-MB01"
       linked_product_skus: ["24-MB02", "24-MB03"]
+      position: 0
+    }
+  ) {
+    success
+    message
+  }
+}
+```
+
+Or update all link types in a single request:
+
+```graphql
+mutation {
+  updateAllLinkProducts(
+    input: {
+      product_sku: "24-MB01"
+      similar_product_skus: ["24-MB02", "24-MB03"]
+      repair_product_skus: ["24-WB03", "24-WB04"]
+      functional_product_skus: ["24-UB02", "24-WB06"]
       position: 0
     }
   ) {
