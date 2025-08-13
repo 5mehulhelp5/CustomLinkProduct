@@ -1,0 +1,137 @@
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* Common Styles for All Product Carousels */
+.similar-products,
+.repair-products,
+.functional-products {
+    margin-bottom: 40px;
+}
+
+.similar-products .block-title,
+.repair-products .block-title,
+.functional-products .block-title {
+    margin-bottom: 20px;
+}
+
+.similar-products .product-items,
+.repair-products .product-items,
+.functional-products .product-items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.similar-products .product-item,
+.repair-products .product-item,
+.functional-products .product-item {
+    margin-bottom: 0;
+    padding: 0 10px;
+}
+
+.similar-products .product-item-info,
+.repair-products .product-item-info,
+.functional-products .product-item-info {
+    width: 100%;
+    text-align: center;
+}
+
+.similar-products .product-item-photo,
+.repair-products .product-item-photo,
+.functional-products .product-item-photo {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.similar-products .product-item-name,
+.repair-products .product-item-name,
+.functional-products .product-item-name {
+    font-size: 14px;
+    margin-bottom: 5px;
+    height: 40px;
+    overflow: hidden;
+}
+
+.similar-products .product-item-price,
+.repair-products .product-item-price,
+.functional-products .product-item-price {
+    margin-bottom: 10px;
+}
+
+.similar-products .product-item-actions,
+.repair-products .product-item-actions,
+.functional-products .product-item-actions {
+    margin-top: 10px;
+}
+
+/* Slick Carousel Customizations */
+.similar-products .slick-prev,
+.similar-products .slick-next,
+.repair-products .slick-prev,
+.repair-products .slick-next,
+.functional-products .slick-prev,
+.functional-products .slick-next {
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+}
+
+.similar-products .slick-prev,
+.repair-products .slick-prev,
+.functional-products .slick-prev {
+    left: -15px;
+}
+
+.similar-products .slick-next,
+.repair-products .slick-next,
+.functional-products .slick-next {
+    right: -15px;
+}
+
+.similar-products .slick-prev:before,
+.similar-products .slick-next:before,
+.repair-products .slick-prev:before,
+.repair-products .slick-next:before,
+.functional-products .slick-prev:before,
+.functional-products .slick-next:before {
+    font-size: 30px;
+}
+
+.similar-products .slick-track,
+.repair-products .slick-track,
+.functional-products .slick-track {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Specific Styles for Similar Products */
+.similar-products {
+    /* Add any specific styles for similar products here */
+}
+
+/* Specific Styles for Repair Products */
+.repair-products {
+    /* Add any specific styles for repair products here */
+}
+
+/* Specific Styles for Functional Products */
+.functional-products {
+    /* Add any specific styles for functional products here */
+}
+
+/* Responsive Styles */
+@media only screen and (max-width: 767px) {
+    .similar-products .slick-prev,
+    .repair-products .slick-prev,
+    .functional-products .slick-prev {
+        left: 0;
+    }
+
+    .similar-products .slick-next,
+    .repair-products .slick-next,
+    .functional-products .slick-next {
+        right: 0;
+    }
+}

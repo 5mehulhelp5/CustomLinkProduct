@@ -1,0 +1,73 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Renga\CustomLinkProduct\Block\Product\SimilarProducts $block */
+?>
+
+<?php if ($block->getItems()->getSize()): ?>
+<div class="block similar-products">
+    <div class="block-title title">
+        <strong id="block-similar-products-heading" role="heading" aria-level="2"><?= $block->escapeHtml($block->getTitle()) ?></strong>
+    </div>
+    <div class="block-content content" aria-labelledby="block-similar-products-heading">
+        <div class="products wrapper grid products-grid products-similar">
+            <ol class="products list items product-items similar-carousel">
+                <?php foreach ($block->getItems() as $_item): ?>
+                <li class="item product product-item">
+                    <div class="product-item-info">
+                        <a href="<?= $block->escapeUrl($block->getProductUrl($_item)) ?>" class="product-item-photo">
+                            <?= $block->getImage($_item, 'similar_products_list')->toHtml() ?>
+                        </a>
+                        <div class="product-item-details">
+                            <strong class="product-item-name">
+                                <a title="<?= $block->escapeHtml($_item->getName()) ?>"
+                                   href="<?= $block->escapeUrl($block->getProductUrl($_item)) ?>"
+                                   class="product-item-link">
+                                    <?= $block->escapeHtml($_item->getName()) ?>
+                                </a>
+                            </strong>
+                            <?= /* @noEscape */ $block->getProductPrice($_item) ?>
+                            <div class="product-item-actions">
+                                <div class="actions-primary">
+                                    <?php if ($_item->isSaleable()): ?>
+                                        <?php $postParams = $block->getAddToCartPostParams($_item); ?>
+                                        <form data-role="tocart-form" data-product-sku="<?= $block->escapeHtml($_item->getSku()) ?>" action="<?= $block->escapeUrl($postParams['action']) ?>" method="post">
+                                            <input type="hidden" name="product" value="<?= /* @noEscape */ $postParams['data']['product'] ?>">
+                                            <input type="hidden" name="<?= /* @noEscape */ \Magento\Framework\App\ActionInterface::PARAM_NAME_URL_ENCODED ?>" value="<?= /* @noEscape */ $postParams['data'][\Magento\Framework\App\ActionInterface::PARAM_NAME_URL_ENCODED] ?>">
+                                            <?= $block->getBlockHtml('formkey') ?>
+                                            <button type="submit"
+                                                    title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
+                                                    class="action tocart primary">
+                                                <span><?= $block->escapeHtml(__('Add to Cart')) ?></span>
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <?php if ($_item->getIsSalable()): ?>
+                                            <div class="stock available"><span><?= $block->escapeHtml(__('In stock')) ?></span></div>
+                                        <?php else: ?>
+                                            <div class="stock unavailable"><span><?= $block->escapeHtml(__('Out of stock')) ?></span></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <?php endforeach; ?>
+            </ol>
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+{
+    ".similar-carousel": {
+        "product-carousel": {
+            "carouselType": "similar"
+        }
+    }
+}
+</script>
+<?php endif; ?>

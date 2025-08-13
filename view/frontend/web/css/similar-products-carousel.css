@@ -1,0 +1,85 @@
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* Similar Products Carousel Styles */
+.similar-products {
+    margin-bottom: 40px;
+}
+
+.similar-products .block-title {
+    margin-bottom: 20px;
+}
+
+.similar-products .product-items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.similar-products .product-item {
+    margin-bottom: 0;
+    padding: 0 10px;
+}
+
+.similar-products .product-item-info {
+    width: 100%;
+    text-align: center;
+}
+
+.similar-products .product-item-photo {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.similar-products .product-item-name {
+    font-size: 14px;
+    margin-bottom: 5px;
+    height: 40px;
+    overflow: hidden;
+}
+
+.similar-products .product-item-price {
+    margin-bottom: 10px;
+}
+
+.similar-products .product-item-actions {
+    margin-top: 10px;
+}
+
+/* Slick Carousel Customizations */
+.similar-products .slick-prev,
+.similar-products .slick-next {
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+}
+
+.similar-products .slick-prev {
+    left: -15px;
+}
+
+.similar-products .slick-next {
+    right: -15px;
+}
+
+.similar-products .slick-prev:before,
+.similar-products .slick-next:before {
+    font-size: 30px;
+}
+
+.similar-products .slick-track {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+@media only screen and (max-width: 767px) {
+    .similar-products .slick-prev {
+        left: 0;
+    }
+
+    .similar-products .slick-next {
+        right: 0;
+    }
+}
