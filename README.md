@@ -115,6 +115,7 @@ mutation {
 ```
 ## Configuration
 ![Alt text](/docs/backend-Config.png)
+
 ## Frontend Display
 
 The module adds three carousel sections (sliders) to the product detail page, displaying the linked products:
@@ -122,6 +123,8 @@ The module adds three carousel sections (sliders) to the product detail page, di
 1. **Similar Products** - Products that are similar to the current product
 2. **Repair Parts** - Products that can be used to repair the current product
 3. **Functional Equivalents** - Products that are functionally equivalent to the current product
+
+![Alt text](/docs/frontend-slider.png)
 
 ### Technical Implementation
 
