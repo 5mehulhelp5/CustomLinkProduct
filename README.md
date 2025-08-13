@@ -113,7 +113,8 @@ mutation {
   }
 }
 ```
-
+## Configuration
+![Alt text](/docs/backend-Config.png)
 ## Frontend Display
 
 The module adds three carousel sections (sliders) to the product detail page, displaying the linked products:
